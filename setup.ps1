@@ -21,3 +21,18 @@ if ($PartitionStyle -ne "MBR"){
 for ($num = 1 ; $num -le $loops ; $num++){
     Start-BitsTransfer -Source http://speedtest-sgp1.digitalocean.com/5gb.test -Destination d:\$num.bin
 }
+
+Start-Job -ScriptBlock `
+{
+    while ((Get-BitLockerVolume -MountPoint D:).VolumeStatus -eq "FullyDecrypted")
+    {
+    }
+    $sw = [Diagnostics.Stopwatch]::StartNew()
+    while ((Get-BitLockerVolume -MountPoint D:).VolumeStatus -eq "FullyEncrypted")
+    {
+    }
+    $sw.Stop()
+    $sw.Elapsed
+    $loops=5
+    Add-Content -Path D:\Results.txt -Value "Total time elapsed to encrypt a disk with $($loops*5)GB in seconds: $($sw.Elapsed)"
+}
