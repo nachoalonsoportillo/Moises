@@ -36,7 +36,6 @@ $LogonScript = @'
     {
     }
     $sw.Stop()
-    $sw.Elapsed
     Add-Content -Path D:\Results.txt -Value "Total time elapsed to encrypt the data disk in seconds: $($sw.Elapsed)"
 
     Unregister-ScheduledTask -TaskName "StartupScript" -Confirm:$False
