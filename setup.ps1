@@ -32,7 +32,7 @@ $LogonScript = @'
     {
     }
     $sw = [Diagnostics.Stopwatch]::StartNew()
-    while ((Get-BitLockerVolume -MountPoint D:).VolumeStatus -eq "FullyEncrypted")
+    while ((Get-BitLockerVolume -MountPoint D:).VolumeStatus -ne "FullyEncrypted")
     {
     }
     $sw.Stop()
