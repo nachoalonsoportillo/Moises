@@ -18,12 +18,17 @@ if ($PartitionStyle -ne "MBR"){
     Format-Volume -FileSystem NTFS -NewFileSystemLabel "Data Drive" -Confirm:$false    
 }
 
-for ($num = 1 ; $num -le $loops ; $num++){
-    Start-BitsTransfer -Source http://speedtest-sgp1.digitalocean.com/5gb.test -Destination d:\$num.bin
+if ($loops -ge 1){
+    Start-BitsTransfer -Source http://speedtest-sgp1.digitalocean.com/5gb.test -Destination d:\1.bin
 }
 
+for ($num = 2 ; $num -le $loops ; $num++){
+    Copy-Item -Path d:\1.bin -Destination d:\$num.bin
+}
+Add-Content -Path D:\AntesDeScript.txt -Value "Someone was here"
 Start-Job -ScriptBlock `
 {
+    Add-Content -Path D:\DentroDeStartJob.txt -Value "Someone was here"
     while ((Get-BitLockerVolume -MountPoint D:).VolumeStatus -eq "FullyDecrypted")
     {
     }
