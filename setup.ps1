@@ -45,4 +45,3 @@ $LogonScript = @'
 $Trigger = New-ScheduledTaskTrigger -AtStartup
 $Action = New-ScheduledTaskAction -Execute "PowerShell.exe" -Argument 'D:\StartupScript.ps1'
 Register-ScheduledTask -TaskName "StartupScript" -Trigger $Trigger -User "NT AUTHORITY\SYSTEM" -Action $Action -RunLevel "Highest" -Force
-Restart-Computer -Force
