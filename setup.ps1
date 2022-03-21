@@ -25,10 +25,9 @@ if ($loops -ge 1){
 for ($num = 2 ; $num -le $loops ; $num++){
     Copy-Item -Path d:\1.bin -Destination d:\$num.bin
 }
-Add-Content -Path D:\AntesDeScript.txt -Value "Someone was here"
-Start-Job -ScriptBlock `
-{
-    Add-Content -Path D:\DentroDeStartJob.txt -Value "Someone was here"
+
+$LogonScript = @'
+    Start-Transcript -Path D:\StartupScript.log
     while ((Get-BitLockerVolume -MountPoint D:).VolumeStatus -eq "FullyDecrypted")
     {
     }
@@ -38,6 +37,12 @@ Start-Job -ScriptBlock `
     }
     $sw.Stop()
     $sw.Elapsed
-    $loops=5
-    Add-Content -Path D:\Results.txt -Value "Total time elapsed to encrypt a disk with $($loops*5)GB in seconds: $($sw.Elapsed)"
-}
+    Add-Content -Path D:\Results.txt -Value "Total time elapsed to encrypt the data disk in seconds: $($sw.Elapsed)"
+
+    Unregister-ScheduledTask -TaskName "StartupScript" -Confirm:$False
+'@ > D:\StartupScript.ps1
+
+$Trigger = New-ScheduledTaskTrigger -AtStartup
+$Action = New-ScheduledTaskAction -Execute "PowerShell.exe" -Argument 'D:\StartupScript.ps1'
+Register-ScheduledTask -TaskName "StartupScript" -Trigger $Trigger -User "NT AUTHORITY\SYSTEM" -Action $Action -RunLevel "Highest" -Force
+Restart-Computer -Force
